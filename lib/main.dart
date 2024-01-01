@@ -1,11 +1,14 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:Endless_Runer_Demo/airship.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/parallax.dart';
-import 'package:flutter/material.dart';
+import 'package:flame/sprite.dart';
+import 'package:flame_audio/flame_audio.dart';
+import 'package:flutter/material.dart' hide Image;
 
 
 void main() {
@@ -15,12 +18,23 @@ void main() {
 
 class TestGame extends FlameGame with TapDetector {
 
-  late SpriteAnimationComponent crow;
+  late SpriteAnimationComponent crow;  
+  late SpriteAnimationComponent soldier;
+  late SpriteAnimationComponent soldier2;
+  late SpriteAnimationComponent fight1;
+  late SpriteAnimationComponent fight2;
+  late SpriteComponent backChees;
+  late SpriteComponent backChees2;
+  late SpriteComponent backChees3;
+
+
   Vector2 gravity = Vector2(0,30);
 
   @override
   void onLoad() async{
     super.onLoad();
+   // FlameAudio.play("subway.mp3");
+    FlameAudio.bgm.play('subway.mp3');
     ParallaxComponent mountainBackground = await loadParallaxComponent(
       [
         ParallaxImageData('sky.png'),
@@ -33,11 +47,42 @@ class TestGame extends FlameGame with TapDetector {
       ],
       baseVelocity: Vector2(10, 0),
       velocityMultiplierDelta: Vector2(1.6, 1.0));
-      add(mountainBackground);  
+
+    ParallaxComponent mountainBackground2 = await loadParallaxComponent(
+      [
+        ParallaxImageData('mk2_04.png'),
+        // ParallaxImageData('clouds_bg.png'),
+        // ParallaxImageData('glacial_mountains.png'),
+        // ParallaxImageData('clouds_mg_1.png'),    
+        // ParallaxImageData('cloud_lonely.png'),            
+        // ParallaxImageData('clouds_mg_2.png'),    
+        // ParallaxImageData('clouds_mg_3.png'),                        
+      ],
+      position:  Vector2(0, 0),
+      size: Vector2(320*2, 250),
+      baseVelocity: Vector2(200, 0),
+      velocityMultiplierDelta: Vector2(1.6, 1.0));
+
+
+
+      add(mountainBackground2);  
 
       final crowAnimation = await loadSpriteAnimation('crow350x400.png', 
         SpriteAnimationData.sequenced(amount: 12, amountPerRow: 4, stepTime: 0.1, textureSize: Vector2(350,400))
       );
+
+      final soldierAnimation1 = await loadSpriteAnimation('soldier2.png', 
+        SpriteAnimationData.sequenced(amount: 14, amountPerRow: 7, stepTime: 0.1, textureSize: Vector2(27,45))
+      );
+
+      final soldierAnimation2 = await loadSpriteAnimation('soldier2.png', 
+        SpriteAnimationData.sequenced(amount: 7, amountPerRow: 7, stepTime: 0.1, textureSize: Vector2(27,45))
+      );
+
+      final fightAnimation2 = await loadSpriteAnimation('test_img.png', 
+        SpriteAnimationData.sequenced(amount: 41, amountPerRow: 41, stepTime: 0.1, textureSize: Vector2(65,65))
+      );
+
 
       crow  = SpriteAnimationComponent(
         animation: crowAnimation,
@@ -46,7 +91,97 @@ class TestGame extends FlameGame with TapDetector {
         size: Vector2(size.y*350/400,size.y)*0.5
       );
 
-      add(crow);
+
+      soldier  = SpriteAnimationComponent(
+        animation: soldierAnimation1,
+        anchor: Anchor.center,
+        position:size/2,
+        size: Vector2(size.y*27/40,size.y)*0.5
+      );
+
+      fight2  = SpriteAnimationComponent(
+        animation: fightAnimation2,
+        anchor: Anchor.center,
+        position:Vector2(1300,600),
+        size: Vector2(size.y*65/65,size.y)*0.5
+      );      
+
+
+
+      Image soldierImg = await images.load('soldier4.png');
+      Image fightImg = await images.load('fight1.png');
+      Image backCheesImg = await images.load('back_chees.png');
+      Image towerBack = await images.load('mk2_08.png');
+      Image towerBack2 = await images.load('mk2_12.png');
+
+      final spriteSheet = SpriteSheet(
+        image: soldierImg,
+        srcSize: Vector2(27,45),
+      );
+
+      final spriteSheet2 = SpriteSheet(
+        image: fightImg,
+        srcSize: Vector2(58,61),
+      );  
+
+      final backCheesSheet = SpriteSheet(
+        image: backCheesImg,
+        srcSize: Vector2(320,200),
+      );            
+
+      final animation2 = SpriteAnimation.fromFrameData(
+        soldierImg, 
+        SpriteAnimationData([
+          spriteSheet.createFrameDataFromId(1, stepTime: 0.1), // by id
+          spriteSheet.createFrameDataFromId(2, stepTime: 0.1), // by id
+          spriteSheet.createFrameDataFromId(3, stepTime: 0.1), // by id
+          spriteSheet.createFrameDataFromId(4, stepTime: 0.1), // by id
+          spriteSheet.createFrameDataFromId(5, stepTime: 0.1), // by id
+          spriteSheet.createFrameDataFromId(6, stepTime: 0.1), // by id
+          spriteSheet.createFrameDataFromId(7, stepTime: 0.1), // by id
+        ]),
+      );
+
+      soldier2  = SpriteAnimationComponent(
+        animation: animation2,
+        anchor: Anchor.center,
+        position:size/2,
+        size: Vector2(size.y*27/40,size.y)*0.5
+      );
+
+
+      fight1  = SpriteAnimationComponent(
+        animation: animation2,
+        anchor: Anchor.center,
+        position:size/2,
+        size: Vector2(size.y*58/61,size.y)*0.5
+      );
+
+      backChees  = SpriteComponent()
+        ..sprite = await loadSprite('back_chees_03.png')
+        ..size = Vector2(320*4, 200*4)
+        ..position = Vector2(640, 300);
+
+
+      backChees2  = SpriteComponent()
+        ..sprite = await loadSprite('mk2_08.png')
+        ..size = Vector2(320*2, 250);  
+
+
+      backChees3  = SpriteComponent()
+        ..sprite = await loadSprite('mk2_12.png')
+        ..size = Vector2(320*2, 200)
+        ..position = Vector2(0, 250);
+
+
+      //add(crow);
+      add(backChees2);
+      add(backChees3);
+
+      add(backChees);
+      add(fight2);
+
+
 
       for (var i = 0; i < 5; i++) {
         add(AirShip(i));
