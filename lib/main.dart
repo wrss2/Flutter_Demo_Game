@@ -19,6 +19,7 @@ void main() {
 class TestGame extends FlameGame with TapDetector {
 
   late SpriteAnimationComponent crow;  
+  late SpriteAnimationComponent crow2;    
   late SpriteAnimationComponent soldier;
   late SpriteAnimationComponent soldier2;
   late SpriteAnimationComponent fight1;
@@ -34,7 +35,7 @@ class TestGame extends FlameGame with TapDetector {
   void onLoad() async{
     super.onLoad();
    // FlameAudio.play("subway.mp3");
-    FlameAudio.bgm.play('subway.mp3');
+  //  FlameAudio.bgm.play('subway.mp3');
     ParallaxComponent mountainBackground = await loadParallaxComponent(
       [
         ParallaxImageData('sky.png'),
@@ -71,6 +72,10 @@ class TestGame extends FlameGame with TapDetector {
         SpriteAnimationData.sequenced(amount: 12, amountPerRow: 4, stepTime: 0.1, textureSize: Vector2(350,400))
       );
 
+      final crowAnimation2 = await loadSpriteAnimation('bird2.png', 
+        SpriteAnimationData.sequenced(amount: 16, amountPerRow: 16, stepTime: 0.1, textureSize: Vector2(64,174))
+      );      
+
       final soldierAnimation1 = await loadSpriteAnimation('soldier2.png', 
         SpriteAnimationData.sequenced(amount: 14, amountPerRow: 7, stepTime: 0.1, textureSize: Vector2(27,45))
       );
@@ -89,6 +94,14 @@ class TestGame extends FlameGame with TapDetector {
         anchor: Anchor.center,
         position:size/2,
         size: Vector2(size.y*350/400,size.y)*0.5
+      );
+
+
+      crow2  = SpriteAnimationComponent(
+        animation: crowAnimation2,
+        anchor: Anchor.center,
+        position:size/2,
+        size: Vector2(size.y*64/174,size.y)*0.5
       );
 
 
@@ -174,7 +187,7 @@ class TestGame extends FlameGame with TapDetector {
         ..position = Vector2(0, 250);
 
 
-      //add(crow);
+
       add(backChees2);
       add(backChees3);
 
@@ -186,6 +199,8 @@ class TestGame extends FlameGame with TapDetector {
       for (var i = 0; i < 5; i++) {
         add(AirShip(i));
       }
+
+      add(crow2);
 
       // add(SpriteComponent(
       //   anchor: Anchor.center,
