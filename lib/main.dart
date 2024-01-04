@@ -24,6 +24,7 @@ class TestGame extends FlameGame with TapDetector {
   late SpriteAnimationComponent soldier2;
   late SpriteAnimationComponent fight1;
   late SpriteAnimationComponent fight2;
+  late SpriteAnimationComponent fight3;  
   late SpriteComponent backChees;
   late SpriteComponent backChees2;
   late SpriteComponent backChees3;
@@ -35,7 +36,7 @@ class TestGame extends FlameGame with TapDetector {
   void onLoad() async{
     super.onLoad();
    // FlameAudio.play("subway.mp3");
-  //  FlameAudio.bgm.play('subway.mp3');
+    FlameAudio.bgm.play('subway.mp3');
     ParallaxComponent mountainBackground = await loadParallaxComponent(
       [
         ParallaxImageData('sky.png'),
@@ -88,12 +89,16 @@ class TestGame extends FlameGame with TapDetector {
         SpriteAnimationData.sequenced(amount: 41, amountPerRow: 41, stepTime: 0.1, textureSize: Vector2(65,65))
       );
 
+      final fightAnimation3 = await loadSpriteAnimation('mk_vs.png', 
+        SpriteAnimationData.sequenced(amount: 20, amountPerRow: 20, stepTime: 0.1, textureSize: Vector2(30,48))
+      );
+
 
       crow  = SpriteAnimationComponent(
         animation: crowAnimation,
         anchor: Anchor.center,
         position:size/2,
-        size: Vector2(size.y*350/400,size.y)*0.5
+      size: Vector2(size.y*350/400,size.y)*0.5
       );
 
 
@@ -118,6 +123,14 @@ class TestGame extends FlameGame with TapDetector {
         position:Vector2(1300,600),
         size: Vector2(size.y*65/65,size.y)*0.5
       );      
+
+
+      fight3  = SpriteAnimationComponent(
+        animation: fightAnimation3,
+        anchor: Anchor.center,
+        position:Vector2(750,600),
+        size: Vector2(size.y*30/48,size.y)*0.2
+      );  
 
 
 
@@ -167,7 +180,7 @@ class TestGame extends FlameGame with TapDetector {
         animation: animation2,
         anchor: Anchor.center,
         position:size/2,
-        size: Vector2(size.y*58/61,size.y)*0.5
+        size: Vector2(size.y*(58/61)*0.5,size.y)*0.5
       );
 
       backChees  = SpriteComponent()
@@ -193,6 +206,7 @@ class TestGame extends FlameGame with TapDetector {
 
       add(backChees);
       add(fight2);
+      add(fight3);
 
 
 
